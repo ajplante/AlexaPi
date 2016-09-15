@@ -7,7 +7,7 @@ cp initd_alexa.sh /etc/init.d/AlexaPi
 update-rc.d AlexaPi defaults
 touch /var/log/alexa.log
 
-echo "Enter your ProductID:"
+echo "Enter your Security Profile Name:"
 read productid
 echo ProductID = \"$productid\" >> creds.py
 
@@ -19,11 +19,11 @@ echo "Enter your Security Profile ID:"
 read spid
 echo Security_Profile_ID = \"$spid\" >> creds.py
 
-echo "Enter your Security Client ID:"
+echo "Enter your Client ID:"
 read cid
 echo Client_ID = \"$cid\" >> creds.py
 
-echo "Enter your Security Client Secret:"
+echo "Enter your Client Secret:"
 read secret
 echo Client_Secret = \"$secret\" >> creds.py
 
