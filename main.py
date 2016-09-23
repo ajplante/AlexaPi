@@ -38,11 +38,16 @@ class bcolors:
 	UNDERLINE = '\033[4m'
 
 #Settings
-button = 18 		# gpio Pin with button connected
-plb_light = 24		# gpio Pin for the playback/activity light
-rec_light = 25		# gpio Pin for the recording light
+# button = 18 		# gpio Pin with button connected
+button = port.PA20
+# plb_light = 24		# gpio Pin for the playback/activity light
+plb_light = port.PA9		# GPIO Pin for the playback/activity light
+# rec_light = 25		# gpio Pin for the recording light
+rec_light = port.PA8		# GPIO Pin for the recording light
 lights = [plb_light, rec_light] 	# gpio Pins with LED's connected
-device = "plughw:1" # Name of your microphone/sound card in arecord -L
+# device = "plughw:1" # Name of your microphone/sound card in arecord -L
+device = "plughw:audiocodec" # Name of your microphone/sound card in arecord -L
+playlists = set(['pls','m3u','ash']) 
 
 #Debug
 debug = 1
@@ -292,20 +297,29 @@ def playa_play(playa, content):
 # ----------------------------------------  ----------------------------------------
 
 def setupGPIO():
-	gpio.setwarnings(False)
-	gpio.cleanup()
-	gpio.setmode(gpio.BCM)
-	gpio.setup(button, gpio.IN, pull_up_down=gpio.PUD_UP)
-	gpio.setup(lights, gpio.OUT)
-	gpio.output(lights, gpio.LOW)
+#	gpio.setwarnings(False)
+#	gpio.cleanup()
+#	gpio.setmode(gpio.BCM)
+	gpio.init()
+#	gpio.setup(button, gpio.IN, pull_up_down=gpio.PUD_UP)
+	gpio.setcfg(button, gpio.INPUT)
+	gpio.pullup(button, gpio.PULLUP)
+#	gpio.setup(lights, gpio.OUT)
+	gpio.setcfg(lights[0], gpio.OUTPUT)
+	gpio.setcfg(lights[1], gpio.OUTPUT)
+#	gpio.output(lights, gpio.LOW)
+	gpio.output(lights[0], gpio.LOW)
+	gpio.output(lights[1], gpio.LOW)
 
 
 def runGPIO(lght, low, high, sleeptime):
 	for x in range(low, high):
 		time.sleep(sleeptime)
-		gpio.output(lght, gpio.HIGH)
+#		gpio.output(lght, gpio.HIGH)
+		gpio.output(plb_light, gpio.HIGH)
 		time.sleep(sleeptime)
-		gpio.output(lght, gpio.LOW)
+#		gpio.output(lght, gpio.LOW)
+		gpio.output(plb_light, gpio.LOW)
 
 def setup():
 	setupGPIO()
