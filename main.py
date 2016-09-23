@@ -3,7 +3,7 @@
 import os
 import random
 import time
-import RPi.GPIO as GPIO
+# import RPi.gpio as gpio
 import alsaaudio
 import wave
 import random
@@ -17,6 +17,8 @@ import email
 import pyaudio
 from memcache import Client
 from creds import *
+from pyA20.gpio import gpio
+from pyA20.gpio import port
 
 servers = ["127.0.0.1:11211"]
 mc = Client(servers, debug=1)
@@ -36,10 +38,10 @@ class bcolors:
 	UNDERLINE = '\033[4m'
 
 #Settings
-button = 18 		# GPIO Pin with button connected
-plb_light = 24		# GPIO Pin for the playback/activity light
-rec_light = 25		# GPIO Pin for the recording light
-lights = [plb_light, rec_light] 	# GPIO Pins with LED's connected
+button = 18 		# gpio Pin with button connected
+plb_light = 24		# gpio Pin for the playback/activity light
+rec_light = 25		# gpio Pin for the recording light
+lights = [plb_light, rec_light] 	# gpio Pins with LED's connected
 device = "plughw:1" # Name of your microphone/sound card in arecord -L
 
 #Debug
@@ -290,30 +292,30 @@ def playa_play(playa, content):
 # ----------------------------------------  ----------------------------------------
 
 def setupGPIO():
-	GPIO.setwarnings(False)
-	GPIO.cleanup()
-	GPIO.setmode(GPIO.BCM)
-	GPIO.setup(button, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-	GPIO.setup(lights, GPIO.OUT)
-	GPIO.output(lights, GPIO.LOW)
+	gpio.setwarnings(False)
+	gpio.cleanup()
+	gpio.setmode(gpio.BCM)
+	gpio.setup(button, gpio.IN, pull_up_down=gpio.PUD_UP)
+	gpio.setup(lights, gpio.OUT)
+	gpio.output(lights, gpio.LOW)
 
 
 def runGPIO(lght, low, high, sleeptime):
 	for x in range(low, high):
 		time.sleep(sleeptime)
-		GPIO.output(lght, GPIO.HIGH)
+		gpio.output(lght, gpio.HIGH)
 		time.sleep(sleeptime)
-		GPIO.output(lght, GPIO.LOW)
+		gpio.output(lght, gpio.LOW)
 
 def setup():
-	setupGPIO()
+	setupgpio()
 	# while internet_on() == False:
 	# 	print(".")
 	token = gettoken()
 	if token == False:
 		while True:
-			runGPIO(rec_light, 0, 5, .1)
-		runGPIO(plb_light, 0, 5, .1)
+			rungpio(rec_light, 0, 5, .1)
+		rungpio(plb_light, 0, 5, .1)
 
 #  ---------------------------------------- -----------------------------------------
 # ---------------------------------- decoding code -----------------------------------
@@ -499,7 +501,7 @@ def audioDownloadsList(r):
 
 def alexa_speech_recognizer(file_path, token):
 	if debug: print("{}Sending Speech Request...{}".format(bcolors.OKBLUE, bcolors.ENDC))
-	GPIO.output(plb_light, GPIO.HIGH)
+	gpio.output(plb_light, gpio.HIGH)
 	url = 'https://access-alexa-na.amazon.com/v1/avs/speechrecognizer/recognize'
 	headers = {'Authorization' : 'Bearer %s' % gettoken()}
 	d = {
@@ -561,7 +563,7 @@ def alexa_getnextitem(nav_token):
 	time.sleep(0.5)
 	# if audioplaying == False:
 	if debug: print("{}Sending GetNextItem Request...{}".format(bcolors.OKBLUE, bcolors.ENDC))
-	GPIO.output(plb_light, GPIO.HIGH)
+	gpio.output(plb_light, gpio.HIGH)
 	url = 'https://access-alexa-na.amazon.com/v1/avs/audioplayer/getNextItem'
 	headers = {'Authorization' : 'Bearer %s' % gettoken(), 'content-type' : 'application/json; charset=UTF-8'}
 	d = {
