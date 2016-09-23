@@ -308,14 +308,14 @@ def runGPIO(lght, low, high, sleeptime):
 		gpio.output(lght, gpio.LOW)
 
 def setup():
-	setupgpio()
+	setupGPIO()
 	# while internet_on() == False:
 	# 	print(".")
 	token = gettoken()
 	if token == False:
 		while True:
-			rungpio(rec_light, 0, 5, .1)
-		rungpio(plb_light, 0, 5, .1)
+			runGPIO(rec_light, 0, 5, .1)
+		runGPIO(plb_light, 0, 5, .1)
 
 #  ---------------------------------------- -----------------------------------------
 # ---------------------------------- decoding code -----------------------------------
